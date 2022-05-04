@@ -88,6 +88,7 @@ def indexer_MS1():
         if folder == '.DS_Store': continue
         for file in os.listdir(os.path.join('DEV', folder)):
             if file == '.DS_Store': continue
+            numDocuments += 1
             with open(os.path.join('DEV', folder, file), 'r') as f:
                 data = json.load(f)
                 content = data['content']
