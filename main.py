@@ -26,9 +26,9 @@ def tokenize(text):
 
 
 def indexer():    
-    for folder in os.listdir('DEV_test'):
+    for folder in os.listdir('DEV'):
         if folder == '.DS_Store': continue      # .DS_Store gets created automatically; no need to delete it all the time
-        for file in os.listdir(os.path.join('DEV_test', folder)):
+        for file in os.listdir(os.path.join('DEV', folder)):
             if file == '.DS_Store': continue    # .DS_Store gets created automatically; no need to delete it all the time
             with open(os.path.join('DEV', folder, file), 'r') as f:
                 data = json.load(f)
@@ -74,6 +74,33 @@ def indexer():
     print(inverted_index.keys())
     '''
     
+
+# Indexer for MS 1
+def indexer_MS1():    
+    for folder in os.listdir('DEV'):
+        indexes = dict()
+        if folder == '.DS_Store': continue
+        for file in os.listdir(os.path.join('DEV', folder)):
+            if file == '.DS_Store': continue
+            with open(os.path.join('DEV', folder, file), 'r') as f:
+                data = json.load(f)
+                content = data['content']
+                stemmed_tokens = [ps.stem(token) for token in word_tokenize(content) if token.isalnum()]
+
+                tokensFrequency = dict()
+                for token in stemmed_tokens:
+                    if token not in tokensFrequency:
+                        tokensFrequency[token] = 0
+                    tokensFrequency[token] += 1
+                for token, frequency in tokensFrequency.items():
+                    if token not in indexes:
+                        indexes[token] = set()
+                    indexes[token].add((data['url'], frequency))
+        
+        # Store the indexes to a file with the same name as the folder (one index file for each folder)
+        with open(f'{folder}.txt', 'w') as file:
+            file.write(str(indexes))
+
 
 
 
