@@ -8,7 +8,6 @@ import json
 inverted_index = {}
 
 
-
 def tokenize(text):
     tokens = []
     lines = text.split('\n')
@@ -25,8 +24,8 @@ def indexer():
         for file in os.listdir(os.path.join('DEV', folder)):
             with open(os.path.join('DEV', folder, file), 'r') as f:
                 data = json.load(f)
-                soup = BeautifulSoup(data['content'], 'lxml')
-                tokens = tokenize(soup.get_text())
+                #soup = BeautifulSoup(data['content'], 'lxml')
+                tokens = tokenize(data['content'])
                 tokensFrequency = dict()
                 for token in tokens:
                     if token not in tokensFrequency:
@@ -37,14 +36,9 @@ def indexer():
                         inverted_index[token] = set()
                     inverted_index[token].add((data['url'], frequency))
 
-    '''
-    counter = 0
     for key, value in inverted_index.items():
-        counter += 1
-        if counter > 50:
-            break
         print(f'{key}: {value}')
-    '''
+
 
 
 if __name__ == '__main__':
