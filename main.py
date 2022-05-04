@@ -126,5 +126,4 @@ if __name__ == '__main__':
 
     print(f'Number of (Unique) Words: {len(inverted_index)}\n\n')
 
-    size = sum([os.path.getsize(file) for file in os.listdir(os.getcwd()) if file.endswith('.txt')])
-    print(f'Total Size of Index: {size} bytes')
+    print(f"Total Size of Index: {sum([os.path.getsize(file) for file in os.listdir(os.getcwd()) if file.endswith('.txt')])} bytes")
