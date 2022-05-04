@@ -8,6 +8,7 @@ from nltk.tokenize import word_tokenize
 
 ps = PorterStemmer()
 
+numDocuments = 0
 inverted_index = {}
 
 
@@ -25,11 +26,14 @@ def tokenize(text):
 '''
 
 
-def indexer():    
+def indexer():
+    global numDocuments
+    
     for folder in os.listdir('DEV'):
         if folder == '.DS_Store': continue      # .DS_Store gets created automatically; no need to delete it all the time
         for file in os.listdir(os.path.join('DEV', folder)):
             if file == '.DS_Store': continue    # .DS_Store gets created automatically; no need to delete it all the time
+            numDocuments += 1
             with open(os.path.join('DEV', folder, file), 'r') as f:
                 data = json.load(f)
                 content = data['content']
