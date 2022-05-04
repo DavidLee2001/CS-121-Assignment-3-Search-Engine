@@ -9,7 +9,7 @@ from nltk.tokenize import word_tokenize
 ps = PorterStemmer()
 
 numDocuments = 0
-inverted_index = {}
+inverted_index = dict()
 
 
 # Not needed as the word_tokenize (and PortreStemmer) is used; keeping it for reference
@@ -80,7 +80,9 @@ def indexer():
     
 
 # Indexer for MS 1
-def indexer_MS1():    
+def indexer_MS1():
+    global numDocuments
+
     for folder in os.listdir('DEV'):
         indexes = dict()
         if folder == '.DS_Store': continue
@@ -100,6 +102,9 @@ def indexer_MS1():
                     if token not in indexes:
                         indexes[token] = set()
                     indexes[token].add((data['url'], frequency))
+                    if token not in inverted_index:
+                        inverted_index[token] = set()
+                    inverted_index[token].add((data['url'], frequency))
         
         # Store the indexes to a file with the same name as the folder (one index file for each folder)
         with open(f'{folder}.txt', 'w') as file:
@@ -110,7 +115,8 @@ def indexer_MS1():
 
 
 if __name__ == '__main__':
-    indexer()
+    #indexer()
+    indexer_MS1()
 
 
 
@@ -118,6 +124,6 @@ if __name__ == '__main__':
     print(f'Number of Documents: {numDocuments}\n\n')
 
     print(f'Number of (Unique) Words: {len(inverted_index)}\n\n')
-    
+
     size = sum([os.path.getsize(file) for file in os.listdir(os.getcwd()) if file.endswith('.txt')])
     print(f'Total Size of Index: {size} bytes')
