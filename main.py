@@ -28,7 +28,7 @@ def tokenize(text):
 
 def indexer():
     global numDocuments
-    
+
     for folder in os.listdir('DEV'):
         if folder == '.DS_Store': continue      # .DS_Store gets created automatically; no need to delete it all the time
         for file in os.listdir(os.path.join('DEV', folder)):
@@ -111,3 +111,13 @@ def indexer_MS1():
 
 if __name__ == '__main__':
     indexer()
+
+
+
+    # Report - MS 1
+    print(f'Number of Documents: {numDocuments}\n\n')
+
+    print(f'Number of (Unique) Words: {len(inverted_index)}\n\n')
+    
+    size = sum([os.path.getsize(file) for file in os.listdir(os.getcwd()) if file.endswith('.txt')])
+    print(f'Total Size of Index: {size} bytes')
