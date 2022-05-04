@@ -26,9 +26,9 @@ def tokenize(text):
 
 
 def indexer():    
-    for folder in os.listdir('DEV'):
+    for folder in os.listdir('DEV_test'):
         if folder == '.DS_Store': continue      # .DS_Store gets created automatically; no need to delete it all the time
-        for file in os.listdir(os.path.join('DEV', folder)):
+        for file in os.listdir(os.path.join('DEV_test', folder)):
             if file == '.DS_Store': continue    # .DS_Store gets created automatically; no need to delete it all the time
             with open(os.path.join('DEV', folder, file), 'r') as f:
                 data = json.load(f)
@@ -49,7 +49,7 @@ def indexer():
                 '''
 
                 # Need to pass in the actual content to the 'word_tokenize' function instead of the entire HTML (need to use BeautifulSoup)
-                stemmed_tokens = [ps.stem(token) for token in word_tokenize(content)]
+                stemmed_tokens = [ps.stem(token) for token in word_tokenize(content) if token.isalnum()]
                 # May need to modify PorterStemmer to take word importance into account
 
                 tokensFrequency = dict()
@@ -63,8 +63,17 @@ def indexer():
                     # The url is the ID
                     inverted_index[token].add((data['url'], frequency))
 
+    # Check the content of 'inverted_index' (for testing purpose)
+    '''
+    counter = 0
     for key, value in inverted_index.items():
+        counter += 1
+        if counter > 50:
+            break
         print(f'{key}: {value}')
+    print(inverted_index.keys())
+    '''
+    
 
 
 
