@@ -63,11 +63,7 @@ def indexer():
                     # The url is the ID
                     inverted_index[token].add((data['url'], frequency))
 
-    counter = 0
     for key, value in inverted_index.items():
-        counter += 1
-        if counter > 50:
-            break
         print(f'{key}: {value}')
 
 
