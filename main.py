@@ -12,7 +12,7 @@ numDocuments = 0
 inverted_index = dict()
 
 
-# Not needed as the word_tokenize (and PortreStemmer) is used; keeping it for reference
+# Not needed as the word_tokenize (and PorterStemmer) is used; keeping it for reference
 '''
 def tokenize(text):
     tokens = []
@@ -82,6 +82,7 @@ def indexer():
 # Indexer for MS 1
 def indexer_MS1():
     global numDocuments
+    if not os.path.exists('Indexes'): os.mkdir('Indexes')
 
     for folder in os.listdir('DEV'):
         indexes = dict()
@@ -99,6 +100,7 @@ def indexer_MS1():
                     if token not in tokensFrequency:
                         tokensFrequency[token] = 0
                     tokensFrequency[token] += 1
+                    
                 for token, frequency in tokensFrequency.items():
                     if token not in indexes:
                         indexes[token] = set()
@@ -108,7 +110,7 @@ def indexer_MS1():
                     inverted_index[token].add((data['url'], frequency))
         
         # Store the indexes to a file with the same name as the folder (one index file for each folder)
-        with open(f'{folder}.txt', 'w') as file:
+        with open(f'Indexes/{folder}.txt', 'w') as file:
             file.write(str(indexes))
 
 
@@ -126,4 +128,4 @@ if __name__ == '__main__':
 
     print(f'Number of (Unique) Words: {len(inverted_index)}\n\n')
 
-    print(f"Total Size of Index: {sum([os.path.getsize(file) for file in os.listdir(os.getcwd()) if file.endswith('.txt')])} bytes")
+    print(f"Total Size of Index: {sum([os.path.getsize(os.path.join('Indexes', file)) for file in os.listdir(os.path.join(os.getcwd(), 'Indexes'))])} bytes")
