@@ -10,6 +10,7 @@ ps = PorterStemmer()
 
 numDocuments = 0
 inverted_index = dict()
+hashMap = dict()
 
 
 # Not needed as the word_tokenize (and PorterStemmer) is used; keeping it for reference
@@ -23,16 +24,18 @@ def tokenize(text):
                 # Stemming here
                 tokens.append(word.lower())
     return tokens
-'''
+'''    
 
 
 def indexer():
     global numDocuments
+    if not os.path.exists('Indexes'): os.mkdir('Indexes')
 
     for folder in os.listdir('DEV'):
-        if folder == '.DS_Store': continue      # .DS_Store gets created automatically; no need to delete it all the time
+        indexes = dict()
+        if folder == '.DS_Store': continue          # .DS_Store gets created automatically; no need to delete it all the time
         for file in os.listdir(os.path.join('DEV', folder)):
-            if file == '.DS_Store': continue    # .DS_Store gets created automatically; no need to delete it all the time
+            if file == '.DS_Store': continue        # .DS_Store gets created automatically; no need to delete it all the time
             numDocuments += 1
             with open(os.path.join('DEV', folder, file), 'r') as f:
                 data = json.load(f)
@@ -61,65 +64,31 @@ def indexer():
                     if token not in tokensFrequency:
                         tokensFrequency[token] = 0
                     tokensFrequency[token] += 1
-                for token, frequency in tokensFrequency.items():
-                    if token not in inverted_index:
-                        inverted_index[token] = set()
-                    # The url is the ID
-                    inverted_index[token].add((data['url'], frequency))
-
-    # Check the content of 'inverted_index' (for testing purpose)
-    '''
-    counter = 0
-    for key, value in inverted_index.items():
-        counter += 1
-        if counter > 50:
-            break
-        print(f'{key}: {value}')
-    print(inverted_index.keys())
-    '''
-    
-
-# Indexer for MS 1
-def indexer_MS1():
-    global numDocuments
-    if not os.path.exists('Indexes'): os.mkdir('Indexes')
-
-    for folder in os.listdir('DEV'):
-        indexes = dict()
-        if folder == '.DS_Store': continue
-        for file in os.listdir(os.path.join('DEV', folder)):
-            if file == '.DS_Store': continue
-            numDocuments += 1
-            with open(os.path.join('DEV', folder, file), 'r') as f:
-                data = json.load(f)
-                content = data['content']
-                stemmed_tokens = [ps.stem(token) for token in word_tokenize(content) if token.isalnum()]
-
-                tokensFrequency = dict()
-                for token in stemmed_tokens:
-                    if token not in tokensFrequency:
-                        tokensFrequency[token] = 0
-                    tokensFrequency[token] += 1
                     
                 for token, frequency in tokensFrequency.items():
+                    if data['url'] not in hashMap:
+                        hashMap[len(hashMap)] = data['url']
                     if token not in indexes:
                         indexes[token] = set()
-                    indexes[token].add((data['url'], frequency))
+                    indexes[token].add((len(hashMap) - 1, frequency))
                     if token not in inverted_index:
                         inverted_index[token] = set()
-                    inverted_index[token].add((data['url'], frequency))
+                    inverted_index[token].add((len(hashMap) - 1, frequency))
         
         # Store the indexes to a file with the same name as the folder (one index file for each folder)
         with open(f'Indexes/{folder}.txt', 'w') as file:
             file.write(str(indexes))
+    
+    # Store URL/integer HashMap
+    with open('hashMap.txt', 'w') as file:
+        file.write(str(hashMap))
 
 
 
 
 
 if __name__ == '__main__':
-    #indexer()
-    indexer_MS1()
+    indexer()
 
 
 
