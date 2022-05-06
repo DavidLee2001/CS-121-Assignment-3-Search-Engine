@@ -97,4 +97,4 @@ if __name__ == '__main__':
 
     print(f'Number of (Unique) Words: {len(inverted_index)}\n\n')
 
-    print(f"Total Size of Index: {sum([os.path.getsize(os.path.join('Indexes', file)) for file in os.listdir(os.path.join(os.getcwd(), 'Indexes'))])} bytes")
+    print(f"Total Size of Index: {sum([os.path.getsize(os.path.join('Indexes', file)) for file in os.listdir(os.path.join(os.getcwd(), 'Indexes'))] + [os.path.getsize('hashMap.txt')])} bytes")
