@@ -1,36 +1,23 @@
 import os
 from bs4 import BeautifulSoup
-import re
 import json
 from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
+
 
 
 ps = PorterStemmer()
 
 numDocuments = 0
 inverted_index = dict()
-hashMap = dict()
+url_index = dict()
 
-
-# Not needed as the word_tokenize (and PorterStemmer) is used; keeping it for reference
-'''
-def tokenize(text):
-    tokens = []
-    lines = text.split('\n')
-    for line in lines:
-        for word in re.split(r'\W+', line):
-            if word.isalnum() and word.isascii() and word != '':
-                # Stemming here
-                tokens.append(word.lower())
-    return tokens
-'''    
 
 
 def indexer():
     global numDocuments
     if not os.path.exists('Indexes'): os.mkdir('Indexes')
-
+    docID = 0
     for folder in os.listdir('DEV'):
         indexes = dict()
         if folder == '.DS_Store': continue          # .DS_Store gets created automatically; no need to delete it all the time
@@ -55,6 +42,10 @@ def indexer():
                     return
                 '''
 
+                if data['url'] not in url_index:
+                    docID += 1
+                    url_index[data['url']] = docID
+
                 # Need to pass in the actual content to the 'word_tokenize' function instead of the entire HTML (need to use BeautifulSoup)
                 stemmed_tokens = [ps.stem(token) for token in word_tokenize(content) if token.isalnum()]
                 # May need to modify PorterStemmer to take word importance into account
@@ -64,27 +55,21 @@ def indexer():
                     if token not in tokensFrequency:
                         tokensFrequency[token] = 0
                     tokensFrequency[token] += 1
-                    
                 for token, frequency in tokensFrequency.items():
-                    if data['url'] not in hashMap:
-                        hashMap[len(hashMap)] = data['url']
                     if token not in indexes:
                         indexes[token] = set()
-                    indexes[token].add((len(hashMap) - 1, frequency))
+                    indexes[token].add((url_index[data['url']], frequency))
                     if token not in inverted_index:
                         inverted_index[token] = set()
-                    inverted_index[token].add((len(hashMap) - 1, frequency))
+                    inverted_index[token].add((url_index[data['url']], frequency))
         
         # Store the indexes to a file with the same name as the folder (one index file for each folder)
         with open(f'Indexes/{folder}.txt', 'w') as file:
             file.write(str(indexes))
-    
-    # Store URL/integer HashMap
-    with open('hashMap.txt', 'w') as file:
-        file.write(str(hashMap))
-
-
-
+        
+        # Store URL/integer HashMap
+        with open(f'docID.txt', 'a') as file:
+            file.write(f'{url_index}\n')
 
 
 if __name__ == '__main__':
@@ -97,4 +82,4 @@ if __name__ == '__main__':
 
     print(f'Number of (Unique) Words: {len(inverted_index)}\n\n')
 
-    print(f"Total Size of Index: {sum([os.path.getsize(os.path.join('Indexes', file)) for file in os.listdir(os.path.join(os.getcwd(), 'Indexes'))] + [os.path.getsize('hashMap.txt')])} bytes")
+    print(f"Total Size of Index: {sum([os.path.getsize(os.path.join('Indexes', file)) for file in os.listdir(os.path.join(os.getcwd(), 'Indexes')) if file.endswith('.txt')] + [os.path.getsize('docID.txt')])} bytes")
