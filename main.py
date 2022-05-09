@@ -67,9 +67,9 @@ def indexer():
         with open(f'Indexes/{folder}.txt', 'w') as file:
             file.write(str(indexes))
         
-        # Store URL/integer HashMap
-        with open(f'docID.txt', 'a') as file:
-            file.write(f'{url_index}\n')
+    # Store URL/integer HashMap
+    with open(f'docID.txt', 'w') as file:
+        file.write(str(url_index))
 
 
 if __name__ == '__main__':
