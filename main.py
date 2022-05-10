@@ -64,11 +64,11 @@ def indexer():
                     inverted_index[token].add((url_index[data['url']], frequency))
         
         # Store the indexes to a file with the same name as the folder (one index file for each folder)
-        with open(f'Indexes/{folder}.txt', 'w') as file:
+        with open(f'Indexes/{folder}.ser', 'w') as file:
             file.write(str(indexes))
         
     # Store URL/integer HashMap
-    with open(f'docID.txt', 'w') as file:
+    with open(f'docID.ser', 'w') as file:
         file.write(str(url_index))
 
 
@@ -82,4 +82,4 @@ if __name__ == '__main__':
 
     print(f'Number of (Unique) Words: {len(inverted_index)}\n\n')
 
-    print(f"Total Size of Index: {sum([os.path.getsize(os.path.join('Indexes', file)) for file in os.listdir(os.path.join(os.getcwd(), 'Indexes')) if file.endswith('.txt')] + [os.path.getsize('docID.txt')])} bytes")
+    print(f"Total Size of Index: {sum([os.path.getsize(os.path.join('Indexes', file)) for file in os.listdir(os.path.join(os.getcwd(), 'Indexes')) if file.endswith('.ser')] + [os.path.getsize('docID.ser')])} bytes")
