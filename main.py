@@ -17,7 +17,6 @@ url_index = dict()
 def indexer():
     global numDocuments
     if not os.path.exists('Indexes'): os.mkdir('Indexes')
-    docID = 0
     for folder in os.listdir('DEV'):
         indexes = dict()
         if folder == '.DS_Store': continue          # .DS_Store gets created automatically; no need to delete it all the time
@@ -42,9 +41,8 @@ def indexer():
                     return
                 '''
 
-                if data['url'] not in url_index:
-                    docID += 1
-                    url_index[data['url']] = docID
+                if data['url'] not in url_index.values():
+                    url_index[len(url_index)] = data['url']
 
                 # Need to pass in the actual content to the 'word_tokenize' function instead of the entire HTML (need to use BeautifulSoup)
                 stemmed_tokens = [ps.stem(token) for token in word_tokenize(content) if token.isalnum()]
@@ -58,10 +56,10 @@ def indexer():
                 for token, frequency in tokensFrequency.items():
                     if token not in indexes:
                         indexes[token] = set()
-                    indexes[token].add((url_index[data['url']], frequency))
+                    indexes[token].add((len(url_index) - 1, frequency))
                     if token not in inverted_index:
                         inverted_index[token] = set()
-                    inverted_index[token].add((url_index[data['url']], frequency))
+                    inverted_index[token].add((len(url_index) - 1, frequency))
         
         # Store the indexes to a file with the same name as the folder (one index file for each folder)
         with open(f'Indexes/{folder}.ser', 'w') as file:
