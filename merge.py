@@ -2,6 +2,7 @@ import os
 import json
 import ast
 
+
 term_counter = 0
 term_position = dict() # position in merged_index
 
@@ -31,7 +32,7 @@ def merge():
             count  = 0
             for index in indexes: # index = open(file_name, 'r')
                 count += 1
-                print(count)
+                # print(count)
                 position = index_position[index] # position = index.tell()
                 index.seek(position)
 
@@ -68,11 +69,14 @@ def merge():
                     
                     index_position[indexes[i]] = indexes[i].tell()
 
+            new_indexes = list()
             for i, t in enumerate(possible_terms):
                 if t == "":
                     index_position[indexes[i]] = indexes[i].tell()
-                    del indexes[i]
+                else:
+                    new_indexes.append(indexes[i])                
 
+            indexes = new_indexes
 
             if term != None and postings != None: 
                 global term_position
@@ -81,6 +85,8 @@ def merge():
                 merged_index.write(term + ", " + str(postings) + "\n")
                 global term_counter
                 term_counter += 1
+            
+
 
             
 
@@ -126,3 +132,4 @@ if __name__ == '__main__':
     print(f'Number of terms: {term_counter}\n\n')
 
 
+    # Number of terms: 1013219
