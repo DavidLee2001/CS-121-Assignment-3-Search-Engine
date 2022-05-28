@@ -1,14 +1,17 @@
 import os
 import json
 import ast
+import math
 
+numDocuments = 55393
 
 term_counter = 0
-term_position = dict() # position in merged_index
+term_position = dict() # position in merged_index.txt
+champion_list_position = dict() # position in champion_lists.txt
 
 def merge():
-    with open('merged_index.txt', 'w') as merged_index:
-        # dict: {open(file_name, 'r'): file position}
+    with open('merged_index.txt', 'w') as merged_index, \
+        open('champion_lists.txt', 'w') as champion_lists:
         index_position = dict()
         
         indexes = list()
@@ -32,13 +35,10 @@ def merge():
             count  = 0
             for index in indexes: # index = open(file_name, 'r')
                 count += 1
-                # print(count)
                 position = index_position[index] # position = index.tell()
                 index.seek(position)
 
                 line = index.readline()
-
-                # index_position[index] = index.tell() # Update file position
 
                 if line != "":
                     line_list = line.rstrip().split(', ', 1)
@@ -57,7 +57,6 @@ def merge():
             term = min(possible_terms)
             print(term)
             postings = None
-            # index_position[index] = index.tell() # Update file position
 
 
             for i, t in enumerate(possible_terms):
@@ -85,10 +84,31 @@ def merge():
                 merged_index.write(term + ", " + str(postings) + "\n")
                 global term_counter
                 term_counter += 1
-            
 
-
+                # CHAMPION LIST
+                # calculate tf-idf for all documents in postings list
+                # sort the postings list by tf-idf
+                # store the first r documents in champion_lists.txt
+                # line in champion_lists.txt = "term, len_original_postings_list, [(docID, tf-idf), (), ...]"
+                document_scores = dict()
+                for posting in postings:
+                    score = tf_idf_score(posting[1], len(postings))
+                    document_scores[posting[0]] = score
             
+        
+                updated_postings = list()
+
+                r = 0
+                max_r = 2000
+                for docID, tf_idf in sorted(document_scores.items(), key= lambda x: -x[1]):
+                    updated_postings.append((docID, tf_idf))
+                    r += 1
+                    if r == max_r:
+                        break
+                
+                champion_list_position[term] = champion_lists.tell()
+                champion_lists.write(term + ", " + str(len(postings)) + ", " + str(updated_postings) + "\n")
+
 
         # close all partial index files
         for index in index_position:
@@ -96,6 +116,10 @@ def merge():
 
     with open('term_position.json', 'w') as file:
         json.dump(term_position, file)
+
+    with open('champion_list_position.json', 'w') as file:
+        json.dump(champion_list_position, file)
+
 
 
 def union_postings(p1, p2):
@@ -125,6 +149,13 @@ def union_postings(p1, p2):
     return answer
 
 
+def tf_idf_score(term_frequency, document_frequency):
+    return (1 + math.log(term_frequency, 10)) * math.log(numDocuments / document_frequency, 10)
+
+
+
+        
+
 
 if __name__ == '__main__':
     merge()
@@ -132,4 +163,5 @@ if __name__ == '__main__':
     print(f'Number of terms: {term_counter}\n\n')
 
 
-    # Number of terms: 1013219
+    # Old Number of terms: 1013219
+    # New Number of terms: 184827
