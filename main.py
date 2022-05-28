@@ -8,7 +8,6 @@ from nltk.tokenize import word_tokenize
 ps = PorterStemmer()
 
 numDocuments = 0
-# inverted_index = dict()
 docID = dict()
 
 
@@ -36,32 +35,72 @@ def indexer():
                 else:                                                                       # Manual string processing
                     #soup = BeautifulSoup(content, 'lxml')
                     #print(soup.title, soup.text[:10])
-                    return
                 '''
 
+                newID = False
                 if data['url'] not in docID.values():
+                    newID = True
                     docID[len(docID)] = data['url']
+                
+                if newID:
+                    urlID = len(docID) - 1
+                else:
+                    urlID = docID.keys()[docID.values().index(data['url'])]
 
-                # Need to pass in the actual content to the 'word_tokenize' function instead of the entire HTML (need to use BeautifulSoup)
-                stemmed_tokens = [ps.stem(token) for token in word_tokenize(content) if token.isalnum()]
+                #stemmed_tokens = [ps.stem(token) for token in word_tokenize(content) if token.isalnum()]
                 # May need to modify PorterStemmer to take word importance into account
 
                 tokensFrequency = dict()
 
-                for token in stemmed_tokens:
-                    if token not in tokensFrequency:
-                        tokensFrequency[token] = 0
-                    tokensFrequency[token] += 1
+                soup = BeautifulSoup(content, 'html.parser')
+
+                # Weight of 2 
+                for tag in soup.find_all(['i', 'em', 'h5', 'h6']):
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    for token in stemmed_tokens:
+                        if token not in tokensFrequency:
+                            tokensFrequency[token] = 0
+                        tokensFrequency[token] += 2
+                
+                # Weight of 3 tags
+                for tag in soup.find_all(['b', 'h3', 'h4']):
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    for token in stemmed_tokens:
+                        if token not in tokensFrequency:
+                            tokensFrequency[token] = 0
+                        tokensFrequency[token] += 3
+
+                # Weight of 4 tags
+                for tag in soup.find_all(['h2']):
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    for token in stemmed_tokens:
+                        if token not in tokensFrequency:
+                            tokensFrequency[token] = 0
+                        tokensFrequency[token] += 4
+
+                # Weight of 5 tags
+                for tag in soup.find_all(['h1']):
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    for token in stemmed_tokens:
+                        if token not in tokensFrequency:
+                            tokensFrequency[token] = 0
+                        tokensFrequency[token] += 5
+
+                # Weight of 1 tags
+                for tag in ['i', 'em', 'b', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
+                    [s.extract() for s in soup(tag)]
+                for tag in soup.find_all():
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    for token in stemmed_tokens:
+                        if token not in tokensFrequency:
+                            tokensFrequency[token] = 0
+                        tokensFrequency[token] += 1
+
 
                 for token, frequency in tokensFrequency.items():
                     if token not in indexes:
                         indexes[token] = set()
-
-                    indexes[token].add((len(docID) - 1, frequency))
-
-                    # if token not in inverted_index:
-                    #     inverted_index[token] = set()
-                    # inverted_index[token].add((len(docID) - 1, frequency))
+                    indexes[token].add((urlID, frequency))
         
         # Store the indexes to a file with the same name as the folder (one index file for each folder)
         with open(f'Indexes/{folder}.txt', 'w') as file:
@@ -82,9 +121,7 @@ def indexer():
 
     with open('docID.txt', 'w') as file, \
         open('docID_position.json', 'w') as docID_position:
-
         id_position_dict = dict()
-
         for id, url in docID.items():
             id_position_dict[id] = file.tell()
             file.write(url + "\n")
