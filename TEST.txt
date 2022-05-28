@@ -1,4 +1,4 @@
-The firs 10 search queries performed poorly at first both in terms of ranking performance and runtime performance. The query results were not entirely relevant and the response time was ≥ 300ms for each of these terms.
+The first 10 search queries performed poorly at first both in terms of ranking performance and runtime performance. The query results were not entirely relevant and the response time was ≥ 300ms for each of these terms.
 
 
   Poor:
