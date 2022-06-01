@@ -27,7 +27,6 @@ def intersect_postings(p1, p2, n=-1):
                 p1 = p1[1:]
             else:
                 p2 = p2[1:]
-  
     return answer
   
 
@@ -36,11 +35,8 @@ def tf_idf_score(term_frequency, document_frequency):
 
 
 def run(query):
-    with open('champion_list_position.json', 'r') as f1, \
-        open('champion_lists.txt', 'r') as champion_lists, \
-        open('docID_position.json', 'r') as f2, \
-        open('docID.txt', 'r') as urls:
-       
+    with open('champion_list_position.json', 'r') as f1, open('champion_lists.txt', 'r') as champion_lists, \
+        open('docID_position.json', 'r') as f2, open('docID.txt', 'r') as urls:
         champion_list_position = json.load(f1)
         docID_position = json.load(f2)
             
@@ -82,6 +78,7 @@ def run(query):
         results = []
         counter = 0
         tracker = set()
+        # Get the top 25 (if more than 25) postings based on the tf-idf score
         for docID, _ in sorted(result_postings, key=lambda x: -x[1]):
             position = docID_position[str(docID)]
             urls.seek(position)
