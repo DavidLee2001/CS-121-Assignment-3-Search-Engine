@@ -1,4 +1,5 @@
 import os
+from pydoc import doc
 from bs4 import BeautifulSoup
 import json
 from nltk.stem import PorterStemmer
@@ -37,24 +38,18 @@ def indexer():
                     #print(soup.title, soup.text[:10])
                 '''
 
-                newID = False
+                # Set/Get the ID of the URL
                 if data['url'] not in docID.values():
-                    newID = True
+                    urlID = len(docID)
                     docID[len(docID)] = data['url']
-                
-                if newID:
-                    urlID = len(docID) - 1
                 else:
                     urlID = docID.keys()[docID.values().index(data['url'])]
-
-                #stemmed_tokens = [ps.stem(token) for token in word_tokenize(content) if token.isalnum()]
-                # May need to modify PorterStemmer to take word importance into account
 
                 tokensFrequency = dict()
 
                 soup = BeautifulSoup(content, 'html.parser')
 
-                # Weight of 2 
+                # Weight of 2 tags
                 for tag in soup.find_all(['i', 'em', 'h5', 'h6']):
                     stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
                     for token in stemmed_tokens:
@@ -86,7 +81,7 @@ def indexer():
                             tokensFrequency[token] = 0
                         tokensFrequency[token] += 5
 
-                # Weight of 1 tags
+                # Weight of 1 tags (all tags except for the ones with weights of 2, 3, 4, and 5)
                 for tag in ['i', 'em', 'b', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
                     [s.extract() for s in soup(tag)]
                 for tag in soup.find_all():
@@ -95,7 +90,6 @@ def indexer():
                         if token not in tokensFrequency:
                             tokensFrequency[token] = 0
                         tokensFrequency[token] += 1
-
 
                 for token, frequency in tokensFrequency.items():
                     if token not in indexes:
@@ -111,23 +105,21 @@ def indexer():
             for term, postings in sorted(indexes.items()):
                 file.write(term + ", " + str(sorted(postings)).replace("), ","),  ") + "\n")
 
-        
     # # Store URL/integer HashMap
     # with open(f'docID.txt', 'w') as file:
     #     for _, url in docID.items():
     #         # Updated to only write url
     #         file.write(url + "\n")
 
-
-    with open('docID.txt', 'w') as file, \
-        open('docID_position.json', 'w') as docID_position:
+    with open('docID.txt', 'w') as file, open('docID_position.json', 'w') as docID_position:
         id_position_dict = dict()
         for id, url in docID.items():
             id_position_dict[id] = file.tell()
             file.write(url + "\n")
 
-
         json.dump(id_position_dict, docID_position)
+
+
 
 if __name__ == '__main__':
     indexer()
