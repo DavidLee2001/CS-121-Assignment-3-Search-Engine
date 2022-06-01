@@ -53,7 +53,7 @@ def run(query):
             champion_lists.seek(position)
             
             # line = "00000000h, 2, [(24449, 5.5), (27466, 3)]"
-            # line =  "term, document_frequency, [(doc_ID, tf_idf), (doc_ID, tf_idf), etc.]"
+            # line =  "term, document_frequency, [(doc_ID, TF-IDF), (doc_ID, TF-IDF), etc.]"
             line = champion_lists.readline()
             line_list = line.rstrip().split(', ', 2)
             
@@ -73,12 +73,12 @@ def run(query):
         for p in possible_postings[1:]:
             result_postings = intersect_postings(result_postings, p)
   
-        # Added all the tf_idf of each term for each document in intersect_postings()
+        # Added all the TF-IDF of each term for each document in intersect_postings()
 
         results = list()
         counter = 0
         tracker = set()
-        # Get the top 25 (if more than 25) postings based on the tf-idf score
+        # Get the top 25 (if more than 25) postings based on the TF-IDF score
         for docID, _ in sorted(result_postings, key=lambda x: -x[1]):
             position = docID_position[str(docID)]
             urls.seek(position)
