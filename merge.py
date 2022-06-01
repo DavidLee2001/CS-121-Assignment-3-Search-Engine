@@ -10,10 +10,8 @@ term_position = dict() # position in merged_index.txt
 champion_list_position = dict() # position in champion_lists.txt
 
 def merge():
-    with open('merged_index.txt', 'w') as merged_index, \
-        open('champion_lists.txt', 'w') as champion_lists:
+    with open('merged_index.txt', 'w') as merged_index, open('champion_lists.txt', 'w') as champion_lists:
         index_position = dict()
-        
         indexes = list()
          
         # open all partial index files
@@ -39,7 +37,6 @@ def merge():
                 index.seek(position)
 
                 line = index.readline()
-
                 if line != "":
                     line_list = line.rstrip().split(', ', 1)
                     current_term = line_list[0]
@@ -47,17 +44,13 @@ def merge():
 
                     possible_terms.append(current_term)
                     possible_postings.append(current_postings)
-
-                    
                 else:
                     possible_terms.append(line)
                     possible_postings.append(line)
 
-
             term = min(possible_terms)
-            print(term)
+            #print(term)
             postings = None
-
 
             for i, t in enumerate(possible_terms):
                 if t == term:
@@ -78,11 +71,12 @@ def merge():
             indexes = new_indexes
 
             if term != None and postings != None: 
-                global term_position
+                global term_position, term_counter
+
                 term_position[term] = merged_index.tell()
 
-                merged_index.write(term + ", " + str(postings) + "\n")
-                global term_counter
+                #merged_index.write(term + ", " + str(postings) + "\n")
+                merged_index.write(f"{term}, {postings}\n")
                 term_counter += 1
 
                 # CHAMPION LIST
@@ -94,10 +88,10 @@ def merge():
                 for posting in postings:
                     score = tf_idf_score(posting[1], len(postings))
                     document_scores[posting[0]] = score
-            
-        
+                
                 updated_postings = list()
 
+                # Only get the top 2000 postings
                 r = 0
                 max_r = 2000
                 for docID, tf_idf in sorted(document_scores.items(), key= lambda x: -x[1]):
@@ -108,7 +102,6 @@ def merge():
                 
                 champion_list_position[term] = champion_lists.tell()
                 champion_lists.write(term + ", " + str(len(postings)) + ", " + str(updated_postings) + "\n")
-
 
         # close all partial index files
         for index in index_position:
@@ -124,14 +117,12 @@ def merge():
 
 def union_postings(p1, p2):
     answer = list()
-    # print(p1, p2)
     while len(p1) != 0 and len(p2) != 0:
         if p1[0][0] == p2[0][0]:
             answer.append(p1[0])
             p1 = p1[1:]
             p2 = p2[1:]
         else:
-
             if p1[0][0] < p2[0][0]:
                 answer.append(p1[0])
                 p1 = p1[1:]
@@ -154,7 +145,6 @@ def tf_idf_score(term_frequency, document_frequency):
 
 
 
-        
 
 
 if __name__ == '__main__':
