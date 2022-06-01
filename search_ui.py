@@ -15,7 +15,8 @@ def results(q):
     result = query.run(q)
 
     return render_template("results.html", content=result[0], query = q, time=result[1])
-    
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)
