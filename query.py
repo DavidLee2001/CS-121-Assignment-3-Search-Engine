@@ -12,14 +12,14 @@ ps = PorterStemmer()
 numDocuments = 55393
 
 
-def intersect_postings(p1, p2, n=-1):
+def intersect_postings(p1, p2, n = -1):
     answer = list()
 
     while len(p1) != 0 and len(p2) != 0:
         if n != -1 and len(answer) == n:
             break
         if p1[0][0] == p2[0][0]: # comparing docIDs
-            answer.append((p1[0][0], p1[0][1]+p2[0][1]))
+            answer.append((p1[0][0], p1[0][1] + p2[0][1]))
             p1 = p1[1:]
             p2 = p2[1:]
         else:
@@ -68,14 +68,14 @@ def run(query):
         try:
             result_postings = possible_postings[0]
         except:
-            result_postings = []
+            result_postings = list()
           
         for p in possible_postings[1:]:
             result_postings = intersect_postings(result_postings, p)
   
         # Added all the tf_idf of each term for each document in intersect_postings()
 
-        results = []
+        results = list()
         counter = 0
         tracker = set()
         # Get the top 25 (if more than 25) postings based on the tf-idf score
