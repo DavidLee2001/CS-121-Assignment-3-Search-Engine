@@ -80,10 +80,10 @@ def merge():
                 term_counter += 1
 
                 # CHAMPION LIST
-                # calculate tf-idf for all documents in postings list
-                # sort the postings list by tf-idf
+                # calculate TF-IDF for all documents in postings list
+                # sort the postings list by TF-IDF
                 # store the first r documents in champion_lists.txt
-                # line in champion_lists.txt = "term, len_original_postings_list, [(docID, tf-idf), (), ...]"
+                # line in champion_lists.txt = "term, len_original_postings_list, [(docID, TF-IDF), (), ...]"
                 document_scores = dict()
                 for posting in postings:
                     score = tf_idf_score(posting[1], len(postings))
