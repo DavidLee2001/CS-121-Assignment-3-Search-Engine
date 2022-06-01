@@ -13,6 +13,7 @@ numDocuments = 55393
 
 
 def intersect_postings(p1, p2, n = -1):
+    '''Return the common postings given two lists of postings.'''
     answer = list()
 
     while len(p1) != 0 and len(p2) != 0:
@@ -31,10 +32,12 @@ def intersect_postings(p1, p2, n = -1):
   
 
 def tf_idf_score(term_frequency, document_frequency):
+    '''Calculate the TF-IDF score given the term frequency and document frequency.'''
     return (1 + math.log(term_frequency, 10)) * math.log(numDocuments / document_frequency, 10)
 
 
 def run(query):
+    '''Run the query by getting user inputs and printing the top results based on the TF-IDF scores of the documents/postings.'''
     with open('champion_list_position.json', 'r') as f1, open('champion_lists.txt', 'r') as champion_lists, \
         open('docID_position.json', 'r') as f2, open('docID.txt', 'r') as urls:
         champion_list_position = json.load(f1)
