@@ -105,12 +105,6 @@ def indexer():
             for term, postings in sorted(indexes.items()):
                 file.write(term + ", " + str(sorted(postings)).replace("), ","),  ") + "\n")
 
-    # # Store URL/integer HashMap
-    # with open(f'docID.txt', 'w') as file:
-    #     for _, url in docID.items():
-    #         # Updated to only write url
-    #         file.write(url + "\n")
-
     with open('docID.txt', 'w') as file, open('docID_position.json', 'w') as docID_position:
         id_position_dict = dict()
         for id, url in docID.items():
