@@ -10,6 +10,7 @@ term_position = dict() # position in merged_index.txt
 champion_list_position = dict() # position in champion_lists.txt
 
 def merge():
+    '''Merge the partial indexes.'''
     with open('merged_index.txt', 'w') as merged_index, open('champion_lists.txt', 'w') as champion_lists:
         index_position = dict()
         indexes = list()
@@ -116,6 +117,7 @@ def merge():
 
 
 def union_postings(p1, p2):
+    '''Combine two lists of postings.'''
     answer = list()
     while len(p1) != 0 and len(p2) != 0:
         if p1[0][0] == p2[0][0]:
@@ -141,6 +143,7 @@ def union_postings(p1, p2):
 
 
 def tf_idf_score(term_frequency, document_frequency):
+    '''Calculate the TF-IDF score given the term frequency and the document frequency.'''
     return (1 + math.log(term_frequency, 10)) * math.log(numDocuments / document_frequency, 10)
 
 
