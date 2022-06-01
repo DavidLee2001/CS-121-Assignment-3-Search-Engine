@@ -49,47 +49,47 @@ def indexer():
 
                 soup = BeautifulSoup(content, 'html.parser')
 
-                # Weight of 2 tags
+                # Weight of 2 tags (<i>, <em>, <h5>, and <h6> HTML tags)
                 for tag in soup.find_all(['i', 'em', 'h5', 'h6']):
-                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]      # Get the stemmed tokens
                     for token in stemmed_tokens:
                         if token not in tokensFrequency:
                             tokensFrequency[token] = 0
-                        tokensFrequency[token] += 2
+                        tokensFrequency[token] += 2             # Add a weight/frequency of 2
                 
-                # Weight of 3 tags
+                # Weight of 3 tags (<b>, <h3>, and <h4> HTML tags)
                 for tag in soup.find_all(['b', 'h3', 'h4']):
-                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]      # Get the stemmed tokens
                     for token in stemmed_tokens:
                         if token not in tokensFrequency:
                             tokensFrequency[token] = 0
-                        tokensFrequency[token] += 3
+                        tokensFrequency[token] += 3             # Add a weight/frequency of 3
 
-                # Weight of 4 tags
+                # Weight of 4 tags (<h2> HTML tags)
                 for tag in soup.find_all(['h2']):
-                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]      # Get the stemmed tokens
                     for token in stemmed_tokens:
                         if token not in tokensFrequency:
                             tokensFrequency[token] = 0
-                        tokensFrequency[token] += 4
+                        tokensFrequency[token] += 4             # Add a weight/frequency of 4
 
-                # Weight of 5 tags
+                # Weight of 5 tags (<h1> HTML tags)
                 for tag in soup.find_all(['h1']):
-                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]      # Get the stemmed tokens
                     for token in stemmed_tokens:
                         if token not in tokensFrequency:
                             tokensFrequency[token] = 0
-                        tokensFrequency[token] += 5
+                        tokensFrequency[token] += 5             # Add a weight/frequency of 5
 
                 # Weight of 1 tags (all tags except for the ones with weights of 2, 3, 4, and 5)
                 for tag in ['i', 'em', 'b', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6']:
-                    [s.extract() for s in soup(tag)]
+                    [s.extract() for s in soup(tag)]                # Remove the tags of other weights
                 for tag in soup.find_all():
-                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]
+                    stemmed_tokens = [ps.stem(word) for word in word_tokenize(tag.text) if word.isalnum()]      # Get the stemmed tokens
                     for token in stemmed_tokens:
                         if token not in tokensFrequency:
                             tokensFrequency[token] = 0
-                        tokensFrequency[token] += 1
+                        tokensFrequency[token] += 1             # Add a weight/frequency of 1
 
                 for token, frequency in tokensFrequency.items():
                     if token not in indexes:
@@ -99,7 +99,7 @@ def indexer():
         # Store the indexes to a file with the same name as the folder (one index file for each folder)
         with open(f'Indexes/{folder}.txt', 'w') as file:
             # indexes: {term: postings}
-            # postings: docID, frequency/ tf-idf
+            # postings: docID, frequency/TF-IDF
             # sort term alphabetically
             # sort postings by docID
             for term, postings in sorted(indexes.items()):
