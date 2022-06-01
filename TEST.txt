@@ -29,14 +29,10 @@ The first 10 search queries performed poorly at first both in terms of ranking p
 
   1) We accounted for relevant HTML tags to give important text a higher scores so that query results are more relevant:
     regular tags: weight of 1
-    <i>, <em> tags: weight of 2
-    <b> tags: weight of 3
-    <h1> tags: weight of 5
+    <i>, <em>, <h5>, <h6> tags: weight of 2
+    <b>, <h3>, <h4> tags: weight of 3
     <h2> tags: weight of 4
-    <h3> tags: weight of 3
-    <h4> tags: weight of 3
-    <h5> tags: weight of 2
-    <h6> tags: weight of 2
+    <h1> tags: weight of 5
     These weights are used for the term frequency. For example, for a bolded text (with a weight of 3), it counts as 3 occurrences.
 
   2) We also used tf-idf to rank the documents to improve ranking performance.
@@ -44,4 +40,3 @@ The first 10 search queries performed poorly at first both in terms of ranking p
   3) We indexed the index by creating a json  (term_position.json) while merging the partial indexes. This json stores all the terms and their position in the merged index. In doing so, we only needed to read the postings of the query terms as opposed to scanning the file for the query terms.
 
   4) We generated a champion list of the top 2000 documents,based on tf-idf, for each term while merging. This significantly improved response time. 
-
